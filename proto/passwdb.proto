@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package passwdb;
+
+// The request message containing search criteria
+message SearchRequest {
+  string token = 1;
+  string query = 2;
+  string namespace = 3;
+  string dns = 4;
+  repeated string tags = 5;
+}
+
+// The single result message linking to a paawd record
+message SearchResult {
+  int32 id = 1;
+  string namespace = 2;
+  string dns = 3;
+  string username = 4;
+  repeated string tags = 5;
+}
+
+// The top(10) matching results
+message SearchResponse {
+  string query = 1;
+  string dns = 2;
+  repeated SearchResult results = 3;
+}
+
+// The actual password
+message GetPasswdRequest {
+  int32 id = 1;
+  string namespace = 2;
+}
+
+// The actual password
+message GetPasswdResponse {
+  int32 id = 1;
+  string namespace = 2;
+  string dns = 3;
+  string username = 4;
+  string password = 5;
+}
+
+
+// The create password
+message PutPasswdRequest {
+  string namespace = 1;
+  string dns = 2;
+  string username = 3;
+  string password = 4;
+}
+
+// The password update response
+message PutPasswdResponse {
+  int32 id = 1;
+  string namespace = 2;
+  string dns = 3;
+}
+
+message HelloRequest {
+    // Request message contains the name to be greeted
+    string name = 1;
+}
+
+message HelloReply {
+    // Reply contains the greeting message
+    string message = 1;
+}
+
+message SealStatus {
+  enum Enum {
+    UNKNOWN = 0;
+    UNSEALED = 1;
+    SEALED = 2;
+  }
+}
+
+message SealRequest {
+}
+
+message SealResponse {
+  SealStatus.Enum status = 1;
+  string text = 2;
+}
+
+message UnSealRequest {
+  string passphrase = 1;
+}
+
+// The greeting service definition.
+service Vault {
+  
+  rpc Seal (SealRequest) returns (SealResponse) {}
+  rpc UnSeal (UnSealRequest) returns (SealResponse) {}
+  // Sends a greeting
+  rpc Get (GetPasswdRequest) returns (GetPasswdResponse) {}
+  // Sends a greeting
+  rpc Put (PutPasswdRequest) returns (PutPasswdResponse) {}
+  // Search for Passwd
+  rpc Search (SearchRequest) returns (SearchResponse) {}
+  rpc SayHello (HelloRequest) returns (HelloReply);
+}
